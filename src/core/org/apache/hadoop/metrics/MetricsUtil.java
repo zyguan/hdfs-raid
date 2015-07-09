@@ -85,7 +85,7 @@ public class MetricsUtil {
    * Returns the host name.  If the host name is unobtainable, logs the
    * exception and returns "unknown".
    */
-  private static String getHostName() {
+  public static String getHostName() {
     String hostName = null;
     try {
       hostName = InetAddress.getLocalHost().getHostName();

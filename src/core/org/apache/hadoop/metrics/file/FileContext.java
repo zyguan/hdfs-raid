@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.apache.hadoop.metrics.ContextFactory;
+import org.apache.hadoop.metrics.MetricsUtil;
 import org.apache.hadoop.metrics.spi.AbstractMetricsContext;
 import org.apache.hadoop.metrics.spi.OutputRecord;
 
@@ -77,7 +78,7 @@ public class FileContext extends AbstractMetricsContext {
     fileSuffixDateFormat = new SimpleDateFormat(FILE_SUFFIX_DATE_PATTERN);
     Calendar currentDate = Calendar.getInstance();
     if (fileName != null)
-      file = new File(getFullFileName(currentDate));
+      file = new File(getNameWithHostInfo(getFullFileName(currentDate)));
     lastRecordDate = currentDate;
         
     parseAndSetPeriod(PERIOD_PROPERTY);
@@ -90,6 +91,15 @@ public class FileContext extends AbstractMetricsContext {
       String fullFileName = fileName + "." + fileSuffixDateFormat.format(calendar.getTime());
       return fullFileName;
     }
+  }
+
+  private String getNameWithHostInfo(String name) {
+    int dotIdx = name.lastIndexOf('.');
+    int sepIdx = name.lastIndexOf('/');
+    String base = (dotIdx == -1 && sepIdx < dotIdx) ? name : name.substring(0, dotIdx);
+    String ext  = (dotIdx == -1 && sepIdx < dotIdx) ? ""   : name.substring(dotIdx);
+
+    return base + "." + MetricsUtil.getHostName() + ext;
   }
 
   /**
