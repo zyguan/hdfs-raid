@@ -590,4 +590,15 @@ public class RaidUtils {
     return JspUtils.table(result);
   }
 
+  public static DistributedFileSystem convertToDFS(FileSystem fs) {
+    // for RaidDFS
+    if (fs instanceof DistributedRaidFileSystem) {
+      fs = ((DistributedRaidFileSystem) fs).getFileSystem();
+    }
+    if (fs instanceof DistributedFileSystem)
+      return (DistributedFileSystem) fs;
+    else
+      return null;
+  }
+
 }

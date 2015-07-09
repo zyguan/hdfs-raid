@@ -116,7 +116,7 @@ public class DistributedRaidFileSystem extends FilterFileSystem {
   /*
    * Returns the underlying filesystem
    */
-  public FileSystem getFileSystem() throws IOException {
+  public FileSystem getFileSystem() {
     return fs;
   }
 

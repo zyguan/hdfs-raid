@@ -21,8 +21,8 @@
   PurgeMonitor purge = raidNode.getPurgeMonitor();
   CorruptFileCounter counter = raidNode.getCorruptFileCounter();
   PlacementMonitor place = raidNode.getPlacementMonitor();
-  DiskStatus ds = ((DistributedFileSystem)FileSystem.get(raidNode.getConf()))
-                     .getClient().getNSDiskStatus();
+  DiskStatus ds = RaidUtils.convertToDFS(FileSystem.get(raidNode.getConf()))
+                  .getClient().getNSDiskStatus();
   String name = raidNode.getHostName();
   name = name.substring(0, name.indexOf(".")).toUpperCase();
 %>

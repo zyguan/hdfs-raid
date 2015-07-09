@@ -265,7 +265,7 @@ public class StatisticsCollector implements Runnable {
     DFSClient dfs;
     double totalPhysical;
     try {
-      dfs = ((DistributedFileSystem)FileSystem.get(conf)).getClient();
+      dfs = RaidUtils.convertToDFS(FileSystem.get(raidNode.getConf())).getClient();
       totalPhysical = dfs.getNSDiskStatus().getDfsUsed();
     } catch (IOException e) {
       return -1;
