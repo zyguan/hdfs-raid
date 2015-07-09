@@ -631,7 +631,6 @@ public abstract class Storage extends StorageInfo {
      */
     FileLock tryLock() throws IOException {
       File lockF = new File(root, STORAGE_FILE_LOCK);
-      lockF.deleteOnExit();
       RandomAccessFile file = new RandomAccessFile(lockF, "rws");
       FileLock res = null;
       try {
@@ -644,6 +643,7 @@ public abstract class Storage extends StorageInfo {
         file.close();
         throw e;
       }
+      if (res != null) lockF.deleteOnExit();
       return res;
     }
 
