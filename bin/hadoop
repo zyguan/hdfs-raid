@@ -63,6 +63,7 @@ if [ $# = 0 ]; then
   echo "  namenode -format     format the DFS filesystem"
   echo "  secondarynamenode    run the DFS secondary namenode"
   echo "  namenode             run the DFS namenode"
+  echo "  raidnode             run the DFS raidnode"
   echo "  datanode             run a DFS datanode"
   echo "  dfsadmin             run a DFS admin client"
   echo "  mradmin              run a Map-Reduce admin client"
@@ -80,8 +81,9 @@ if [ $# = 0 ]; then
   echo "  oid                  apply the offline fsimage decompressor to an fsimage"
   echo "                       Use -help to see options"
   echo "  jobtracker           run the MapReduce job Tracker node"
-  echo "  pipes                run a Pipes job"
   echo "  tasktracker          run a MapReduce task Tracker node"
+  echo "  pipes                run a Pipes job"
+  echo "  rumen                run a rumen logs analyzer"
   echo "  job                  manipulate MapReduce jobs"
   echo "  queue                get information regarding JobQueues"
   echo "  version              print the version"
@@ -233,6 +235,15 @@ for f in $HADOOP_HOME/build/hadoop-*-tools.jar; do
   TOOL_PATH=${TOOL_PATH}:$f;
 done
 
+# RAID_PATH for raidnode
+if [ -d "$HADOOP_HOME/build/contrib/raid/classes" ]; then
+    RAID_PATH=${RAID_PATH}:$HADOOP_HOME/build/contrib/raid/classes
+fi
+
+for f in $HADOOP_HOME/contrib/raid/*.jar; do
+    RAID_PATH=${RAID_PATH}:$f
+done
+
 # CORONA_PATH for corona daemons
 if [ -d "$HADOOP_HOME/build/contrib/corona/classes" ]; then
   CORONA_PATH=${CORONA_PATH}:$HADOOP_HOME/build/contrib/corona/classes
@@ -241,6 +252,7 @@ fi
 for f in $HADOOP_HOME/contrib/corona/*.jar; do
   CORONA_PATH=${CORONA_PATH}:$f;
 done
+
 
 if [ "$COMMAND" != "hdfsnfsproxy" ] ; then
   if [ "$CORONA_PATH" != "" ]; then
@@ -345,7 +357,7 @@ elif [ "$COMMAND" = "raidnode" ] ; then
   CLASS='org.apache.hadoop.raid.RaidNode'
   JMX_OPTS=$HADOOP_JMX_RAIDNODE_OPTS
   HADOOP_OPTS="$HADOOP_OPTS $HADOOP_GC_LOG_OPTS"
-  CLASSPATH=${CORONA_LIB_PATH}:${CLASSPATH}
+  CLASSPATH=${RAID_PATH}:${CLASSPATH}
 elif [ "$COMMAND" = "notifier" ] ; then
   CLASS='org.apache.hadoop.hdfs.notifier.server.ServerCore'
   if [ "$NOTIFIER_PATH" != "" ]; then
@@ -514,6 +526,10 @@ elif [ "$COMMAND" = "fastcopy" ] ; then
   HADOOP_OPTS="$HADOOP_OPTS $HADOOP_CLIENT_OPTS"
 elif [ "$COMMAND" = "distcp" ] ; then
   CLASS=org.apache.hadoop.tools.DistCp
+  CLASSPATH=${CORONA_LIB_PATH}:${CLASSPATH}:${TOOL_PATH}
+  HADOOP_OPTS="$HADOOP_OPTS $HADOOP_CLIENT_OPTS"
+elif [ "$COMMAND" = "rumen" ] ; then
+  CLASS=org.apache.hadoop.tools.rumen.HadoopLogsAnalyzer
   CLASSPATH=${CORONA_LIB_PATH}:${CLASSPATH}:${TOOL_PATH}
   HADOOP_OPTS="$HADOOP_OPTS $HADOOP_CLIENT_OPTS"
 elif [ "$COMMAND" = "daemonlog" ] ; then

@@ -316,7 +316,8 @@ public class HadoopLogsAnalyzer extends Configured implements Tool {
     Path jobTraceFilename = null;
     Path topologyFilename = null;
     if (args.length == 0 || args[args.length - 1].charAt(0) == '-') {
-      throw new IllegalArgumentException("No input specified.");
+      usage();
+      return 0;
     } else {
       inputFilename = args[args.length - 1];
     }
